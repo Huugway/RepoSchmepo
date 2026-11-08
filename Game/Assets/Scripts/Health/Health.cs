@@ -20,6 +20,10 @@ public class Health : MonoBehaviour
     public int Max => maxHealth;
     public bool IsDead => Current <= 0;
 
+    // Unverwundbar: kein Schaden und kein Rückstoß (z.B. während eines Dashs).
+    public bool IsInvincible => Time.time < invincibleUntil;
+    private float invincibleUntil;
+
     // (aktuelle HP, maximale HP)
     public event Action<int, int> Changed;
     public event Action Died;
@@ -29,9 +33,14 @@ public class Health : MonoBehaviour
         Current = maxHealth;
     }
 
+    public void MakeInvincible(float seconds)
+    {
+        invincibleUntil = Time.time + seconds;
+    }
+
     public void TakeDamage(int amount)
     {
-        if (IsDead)
+        if (IsDead || IsInvincible)
             return;
 
         Current = Mathf.Max(Current - amount, 0);

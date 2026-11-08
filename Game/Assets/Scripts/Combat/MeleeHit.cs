@@ -11,8 +11,8 @@ public static class MeleeHit
         {
             Health health = hit.GetComponent<Health>();
 
-            // Nur Dinge mit Health treffen, und nur die andere Seite
-            if (health == null || health.Team == attackerTeam)
+            // Nur Dinge mit Health treffen, nur die andere Seite, und nichts Unverwundbares
+            if (health == null || health.Team == attackerTeam || health.IsInvincible)
                 continue;
 
             if (step.damage > 0)
