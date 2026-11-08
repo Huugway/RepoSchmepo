@@ -4,17 +4,21 @@ using UnityEngine.InputSystem;
 // Dash des Spielers: ein schneller Sprung in Laufrichtung
 // (oder Richtung Maus, wenn man gerade steht).
 // Ab dem Dash ist man kurz unverwundbar und wird dabei grün angezeigt.
+// Jeder Dash kostet XP.
 [RequireComponent(typeof(Rigidbody2D), typeof(Health), typeof(SpriteRenderer))]
+[RequireComponent(typeof(PlayerXP))]
 public class PlayerDash : MonoBehaviour
 {
     [SerializeField, Range(1f, 10f)] private float distance = 5f;
     [SerializeField, Range(0.05f, 0.5f)] private float duration = 0.15f;
     [SerializeField, Range(0f, 1f)] private float invincibleTime = 0.2f;
     [SerializeField, Range(0f, 10f)] private float cooldown = 5f;
+    [SerializeField, Range(0, 50)] private int xpCost = 5;
     [SerializeField] private Color invincibleColor = Color.green;
 
     private Rigidbody2D body;
     private Health health;
+    private PlayerXP playerXP;
     private SpriteRenderer spriteRenderer;
     private Color normalColor;
     private InputAction dashAction;
@@ -32,10 +36,14 @@ public class PlayerDash : MonoBehaviour
     public float CooldownRemaining => Mathf.Max(0f, nextDashTime - Time.time);
     public bool IsReady => CooldownRemaining <= 0f;
 
+    public int XPCost => xpCost;
+    public bool HasEnoughXP => playerXP.XP >= xpCost;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         health = GetComponent<Health>();
+        playerXP = GetComponent<PlayerXP>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         normalColor = spriteRenderer.color;
         dashAction = InputSystem.actions.FindAction("Dash");
@@ -44,7 +52,8 @@ public class PlayerDash : MonoBehaviour
 
     private void Update()
     {
-        if (dashAction.WasPressedThisFrame() && Time.time >= nextDashTime)
+        // Nur dashen, wenn der Cooldown vorbei ist und genug XP da sind
+        if (dashAction.WasPressedThisFrame() && IsReady && playerXP.TrySpend(xpCost))
             StartDash();
 
         // Grün, solange man unverwundbar ist. Die Farbe nur beim Wechsel setzen,

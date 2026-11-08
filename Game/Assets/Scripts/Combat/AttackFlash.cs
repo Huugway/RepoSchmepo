@@ -37,10 +37,14 @@ public class AttackFlash : MonoBehaviour
         Destroy(gameObject, duration);
     }
 
-    private void Place(Vector2 localPosition, float angle, Vector2 scale)
+    // Position und Größe sind in Welt-Einheiten gemeint. Ist das Eltern-Objekt
+    // skaliert (z.B. ein großer Tank), wird das hier wieder herausgerechnet.
+    private void Place(Vector2 offset, float angle, Vector2 size)
     {
-        transform.localPosition = localPosition;
+        Vector3 parentScale = transform.parent != null ? transform.parent.lossyScale : Vector3.one;
+
+        transform.localPosition = new Vector3(offset.x / parentScale.x, offset.y / parentScale.y, 0f);
         transform.localRotation = Quaternion.Euler(0f, 0f, angle);
-        transform.localScale = new Vector3(scale.x, scale.y, 1f);
+        transform.localScale = new Vector3(size.x / parentScale.x, size.y / parentScale.y, 1f);
     }
 }

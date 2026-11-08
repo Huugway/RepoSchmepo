@@ -16,10 +16,10 @@ public class DamageFlash : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         normalColor = spriteRenderer.color;
-        GetComponent<Health>().Changed += OnHealthChanged;
+        GetComponent<Health>().Damaged += OnDamaged;
     }
 
-    private void OnHealthChanged(int current, int max)
+    private void OnDamaged(int amount)
     {
         spriteRenderer.color = flashColor;
         flashEndTime = Time.time + duration;

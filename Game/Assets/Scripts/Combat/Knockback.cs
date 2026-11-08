@@ -12,6 +12,9 @@ public class Knockback : MonoBehaviour
     // Wie viel Geschwindigkeit pro Physik-Schritt übrig bleibt (0.85 = 15% weniger).
     [SerializeField, Range(0f, 1f)] private float slowdownPerStep = 0.85f;
 
+    // Wie stark Rückstöße wirken: 1 = voll, 0.3 = nur 30% (z.B. für schwere Gegner).
+    [SerializeField, Range(0f, 1f)] private float multiplier = 1f;
+
     private Rigidbody2D body;
     private float endTime;
 
@@ -24,7 +27,7 @@ public class Knockback : MonoBehaviour
 
     public void Apply(Vector2 velocity)
     {
-        body.linearVelocity = velocity;
+        body.linearVelocity = velocity * multiplier;
         endTime = Time.time + duration;
     }
 

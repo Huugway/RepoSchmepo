@@ -24,8 +24,12 @@ public class Health : MonoBehaviour
     public bool IsInvincible => Time.time < invincibleUntil;
     private float invincibleUntil;
 
-    // (aktuelle HP, maximale HP)
+    // (aktuelle HP, maximale HP) - bei Schaden und bei Heilung
     public event Action<int, int> Changed;
+
+    // (Höhe des Schadens) - nur bei Schaden, z.B. für Treffer-Effekte
+    public event Action<int> Damaged;
+
     public event Action Died;
 
     private void Awake()
@@ -45,9 +49,19 @@ public class Health : MonoBehaviour
 
         Current = Mathf.Max(Current - amount, 0);
         Changed?.Invoke(Current, maxHealth);
+        Damaged?.Invoke(amount);
 
         if (IsDead)
             Died?.Invoke();
+    }
+
+    public void Heal(int amount)
+    {
+        if (IsDead)
+            return;
+
+        Current = Mathf.Min(Current + amount, maxHealth);
+        Changed?.Invoke(Current, maxHealth);
     }
 
     // Zum Testen: Rechtsklick auf die Komponente im Inspector -> "Kill".

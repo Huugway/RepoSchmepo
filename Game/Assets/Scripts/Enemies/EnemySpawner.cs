@@ -6,7 +6,9 @@ using UnityEngine;
 // erscheinen nacheinander. Sind alle tot, startet nach einer Pause die nächste Welle.
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private Enemy enemyPrefab;
+    // Gegnertypen, aus denen pro Gegner zufällig einer gewählt wird.
+    // Ein Typ, der öfter kommen soll, kann einfach mehrfach in der Liste stehen.
+    [SerializeField] private Enemy[] enemyPrefabs;
     [SerializeField] private Transform player;
 
     [Header("Wellen")]
@@ -56,7 +58,8 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        Enemy enemy = Instantiate(enemyPrefab, GetSpawnPosition(), Quaternion.identity, transform);
+        Enemy prefab = enemyPrefabs[UnityEngine.Random.Range(0, enemyPrefabs.Length)];
+        Enemy enemy = Instantiate(prefab, GetSpawnPosition(), Quaternion.identity, transform);
         enemy.SetTarget(player);
         enemy.GetComponent<Health>().Died += OnEnemyDied;
 
