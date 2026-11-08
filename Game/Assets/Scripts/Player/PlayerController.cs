@@ -9,6 +9,10 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
 
+    // Wie schnell der Spieler auf moveSpeed kommt (Einheiten pro Sekunde²).
+    // Hoch = direkt, niedrig = rutschig.
+    [SerializeField] private float acceleration = 40f;
+
     private Rigidbody2D body;
     private InputAction moveAction;
     private Vector2 moveInput;
@@ -31,6 +35,9 @@ public class PlayerController : MonoBehaviour
     // ... und in der Physik-Schleife anwenden.
     private void FixedUpdate()
     {
-        body.linearVelocity = moveInput * moveSpeed;
+        Vector2 targetVelocity = moveInput * moveSpeed;
+
+        // Nicht sofort auf die Zielgeschwindigkeit springen, sondern hinbeschleunigen.
+        body.linearVelocity = Vector2.MoveTowards(body.linearVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
     }
 }

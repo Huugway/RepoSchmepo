@@ -5,7 +5,13 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    [SerializeField] private float followSpeed = 5f;
+
+    // Ungefähre Zeit in Sekunden, bis die Kamera das Ziel eingeholt hat.
+    // Klein = klebt am Spieler, groß = zieht weich hinterher.
+    [SerializeField] private float smoothTime = 0.15f;
+
+    // Aktuelle Geschwindigkeit der Kamera, wird von SmoothDamp verwaltet.
+    private Vector3 velocity;
 
     // LateUpdate läuft nach allen Bewegungen im Frame -> kein Ruckeln.
     private void LateUpdate()
@@ -16,6 +22,8 @@ public class CameraFollow : MonoBehaviour
         // Nur X/Y übernehmen, Z der Kamera bleibt (sonst sieht man nichts).
         Vector3 targetPosition = new Vector3(target.position.x, target.position.y, transform.position.z);
 
-        transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
+        // SmoothDamp beschleunigt und bremst die Kamera weich ab,
+        // auch wenn der Spieler plötzlich die Richtung wechselt.
+        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
     }
 }

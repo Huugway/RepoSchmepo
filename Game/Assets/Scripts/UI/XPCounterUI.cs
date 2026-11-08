@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// Zeigt an, wie viel der Spieler eingesammelt hat.
+// Zeigt die XP des Spielers an.
 // Kommt auf ein UI-Text-Objekt, der Spieler wird im Inspector gesetzt.
 [RequireComponent(typeof(Text))]
-public class CollectibleCounterUI : MonoBehaviour
+public class XPCounterUI : MonoBehaviour
 {
-    [SerializeField] private PlayerCollector collector;
+    [SerializeField] private PlayerXP playerXP;
 
     private Text label;
 
@@ -18,18 +18,18 @@ public class CollectibleCounterUI : MonoBehaviour
     // Beim Event anmelden ...
     private void OnEnable()
     {
-        collector.CountChanged += UpdateLabel;
-        UpdateLabel(collector.Count);
+        playerXP.XPChanged += UpdateLabel;
+        UpdateLabel(playerXP.XP);
     }
 
     // ... und wieder abmelden, wenn das Objekt deaktiviert wird.
     private void OnDisable()
     {
-        collector.CountChanged -= UpdateLabel;
+        playerXP.XPChanged -= UpdateLabel;
     }
 
-    private void UpdateLabel(int count)
+    private void UpdateLabel(int xp)
     {
-        label.text = $"Münzen: {count}";
+        label.text = $"XP {xp}";
     }
 }
