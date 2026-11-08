@@ -14,12 +14,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float acceleration = 40f;
 
     private Rigidbody2D body;
+    private Knockback knockback;
     private InputAction moveAction;
     private Vector2 moveInput;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+        knockback = GetComponent<Knockback>();
         moveAction = InputSystem.actions.FindAction("Move");
     }
 
@@ -35,6 +37,10 @@ public class PlayerController : MonoBehaviour
     // ... und in der Physik-Schleife anwenden.
     private void FixedUpdate()
     {
+        // Während eines Rückstoßes steuert der Knockback die Bewegung
+        if (knockback != null && knockback.IsActive)
+            return;
+
         Vector2 targetVelocity = moveInput * moveSpeed;
 
         // Nicht sofort auf die Zielgeschwindigkeit springen, sondern hinbeschleunigen.

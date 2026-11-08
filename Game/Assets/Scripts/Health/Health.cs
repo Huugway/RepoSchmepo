@@ -1,12 +1,21 @@
 using System;
 using UnityEngine;
 
+// Zu welcher Seite etwas gehört. Angriffe treffen nur die andere Seite.
+public enum Team
+{
+    Player,
+    Enemy
+}
+
 // Lebenspunkte für alles, was Schaden nehmen kann (Spieler, Gegner, ...).
 // Was beim Tod passiert, entscheiden andere Scripts über das Died-Event.
 public class Health : MonoBehaviour
 {
     [SerializeField] private int maxHealth = 5;
+    [SerializeField] private Team team = Team.Player;
 
+    public Team Team => team;
     public int Current { get; private set; }
     public int Max => maxHealth;
     public bool IsDead => Current <= 0;

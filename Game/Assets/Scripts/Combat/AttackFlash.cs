@@ -1,33 +1,19 @@
 using UnityEngine;
 
-// Zeigt einen Schlag kurz als halbtransparente Form an (Platzhalter-Optik).
-// Kommt auf ein Kind-Objekt des Spielers mit einem SpriteRenderer.
+// Zeigt eine Zone eines Schlags kurz als halbtransparente Form an (Platzhalter-Optik).
+// Liegt als Prefab vor: Der Angreifer erzeugt pro Zone eine Kopie als Kind-Objekt,
+// ruft Show() auf, und die Kopie löscht sich nach "duration" selbst.
 [RequireComponent(typeof(SpriteRenderer))]
 public class AttackFlash : MonoBehaviour
 {
     [SerializeField] private float duration = 0.1f;
-
-    private SpriteRenderer spriteRenderer;
-    private float hideTime;
-
-    private void Awake()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.enabled = false;
-    }
-
-    private void Update()
-    {
-        if (spriteRenderer.enabled && Time.time >= hideTime)
-            spriteRenderer.enabled = false;
-    }
 
     // Größe und Drehung passend zur Form setzen.
     // Die Sprites sind so gebaut: Kreis = 1 Einheit Durchmesser,
     // Kegel = 1 Einheit lang mit Spitze in der Mitte, Quadrat = 1x1.
     public void Show(AttackStep step, Vector2 aim)
     {
-        float angle = PlayerAttack.AngleOf(aim);
+        float angle = MeleeHit.AngleOf(aim);
 
         switch (step.shape)
         {
@@ -44,9 +30,11 @@ public class AttackFlash : MonoBehaviour
                 break;
         }
 
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = step.visual;
-        spriteRenderer.enabled = true;
-        hideTime = Time.time + duration;
+        spriteRenderer.color = step.color;
+
+        Destroy(gameObject, duration);
     }
 
     private void Place(Vector2 localPosition, float angle, Vector2 scale)
